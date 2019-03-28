@@ -1,15 +1,17 @@
 package steinertree;
 
+import java.util.ArrayList;
+
 public class Prims {
 
 	int[] weight;
     int [] parent;
     ArrayList <Integer> unadded;
     
-    Dijkstra(int N){
+    Prims(int N, ArrayList<Integer> list){
     	weight= new int[N];
         parent = new int[N];
-        unadded = new ArrayList<Integer>();
+        unadded = list;
         for (int i = 0; i < N; i++) 
         { 
             weight[i] = Integer.MAX_VALUE; 
@@ -27,14 +29,14 @@ public class Prims {
         while(unadded.size()>0) {
      	   
      	   int min=Integer.MAX_VALUE;
-     	   for(int i=0; i<dist.length;i++) {   //finding node with min distance
-     		   if (min >= dist[i] && unadded.contains(i)) 
+     	   for(int i=0; i<weight.length;i++) {   //finding node with min distance
+     		   if (min >= weight[i] && unadded.contains(i)) 
                 { 
-                    min = dist[i]; 
+                    min = weight[i]; 
                     nextNode=i;
                 } 
      	   }
-  
+     	   
      	  int remove=unadded.indexOf(nextNode);
      	  unadded.remove(remove);
      	  
@@ -43,8 +45,9 @@ public class Prims {
      		  node ind= new node(nextNode, 0);
      		  int index=graph.get(temp).indexOf(ind);
      		  if (index!=-1) {
-     			  int ist= graph.get(temp).get(index).weight;
+     			  int dist= graph.get(temp).get(index).weight;
          		  if(dist<weight[temp]) {
+         			 
          			  parent[temp]=nextNode;
          			  weight[temp]=dist;
          		  }
@@ -57,7 +60,4 @@ public class Prims {
         
      }
 	
-	public static void main(String[] args) {
-		
-	}
 }

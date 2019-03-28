@@ -112,29 +112,42 @@ public class SteinerTree {
             graph.get(x).add(new node(y,z));
             graph.get(y).add(new node(x,z));
         }
+       
         
-        Dijkstra s=new Dijkstra(N);
-        s.calcDist(graph, 1);
-        System.out.println("ans");
-        for (int i=0; i<s.dist.length;i++) {
-        	System.out.println(s.dist[i]);
-        }
+//        System.out.println("ans");
+//        for (int i=0; i<s.dist.length;i++) {
+//        	System.out.println(s.dist[i]);
+//        	System.out.println("parent "+s.parent[i]);
+//        }
+//        
+//        Prims s1=new Prims(N);
+//        s1.calcTree(graph, 1);
+//        System.out.println("ans");
+//        for (int i=0; i<N;i++) {
+//        	
+//        	System.out.println("parent "+s1.parent[i]);
+//        }
+        
         Sec = sc.nextLine();
         int T= Integer.parseInt(sc.nextLine().split(" ")[1]);
+        if (T==0) {
+        	return;
+        }
         ArrayList<Integer> Terminals = new ArrayList<Integer> ();
         for(int i =0;i<T;i++) Terminals.add(Integer.parseInt(sc.nextLine().split(" ")[1])-1);
         
         ArrayList<ArrayList<node>> Terminalgraph= new ArrayList<ArrayList<node>>();
-        for(int i = 0;i<T;i++) Terminalgraph.add(new ArrayList<node>()) ;
+        for(int i = 0;i<N;i++) Terminalgraph.add(new ArrayList<node>()) ;
         
 //        Forming new grapf with terminals only 
         for(int i=0; i<T;i++) {
-        	Dijkstra temp= new Dijkstra(T);
+        	Dijkstra temp= new Dijkstra(N);
         	int terminal=Terminals.get(i);
-        	temp.calcDist(graph, Terminals.get(i));
-        	for (int j=0; j<Terminals.size();j++) {
+        	temp.calcDist(graph, Terminals.get(i)+1);
+        	for (int j=0; j<T;j++) {
         		int connecting=Terminals.get(j);
-        		if (j!=terminal) {
+        		if (connecting>terminal) {
+        			System.out.println(terminal + " " + connecting);
         			int z= temp.dist[connecting];
         			Terminalgraph.get(terminal).add(new node(connecting,z));
                     Terminalgraph.get(connecting).add(new node(terminal,z));
@@ -142,7 +155,17 @@ public class SteinerTree {
         	}
         }
         
-        //Dijkstra works haven't yet tested above new code tho
+        for (int i=0; i<N;i++) {        	
+        	for (int j=0; j<Terminalgraph.get(i).size();j++) {
+        		System.out.println(i + " " + Terminalgraph.get(i).get(j).vertex + " " + Terminalgraph.get(i).get(j).weight);
+        	}
+        }
+        
+//        Prims mst= new Prims(N, Terminals);
+//        mst.calcTree(Terminalgraph, Terminals.get(0));
+//        for (int i=)
+        
+  
     }
     
 }
