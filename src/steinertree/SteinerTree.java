@@ -50,7 +50,6 @@ class Dijkstra{
        this.dist[source-1]=0;
        parent[source-1]=-1;
        int nextNode=0;
-       int par=0;
       
        while(unvisited.size()>0) {
     	   
@@ -62,8 +61,7 @@ class Dijkstra{
                    nextNode=i;
                } 
     	   }
-    	  parent[nextNode]=par;
-    	  par=nextNode;
+    	  
     	  int remove=unvisited.indexOf(nextNode);
     	  unvisited.remove(remove);
     	  
@@ -74,6 +72,7 @@ class Dijkstra{
     		  if (index!=-1) {
     			  int newdist= min+graph.get(temp).get(index).weight;
         		  if(newdist<dist[temp]) {
+        			  parent[temp]=nextNode;
         			  dist[temp]=newdist;
         		  }
     		  }
