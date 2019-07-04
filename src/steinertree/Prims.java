@@ -1,21 +1,24 @@
+//Angel Walia 2017132
+//Riya Singh 2017309
 package steinertree;
 
 import java.util.ArrayList;
 
 public class Prims {
 
-	int[] weight;
+    int[] weight;
     int [] parent;
     ArrayList <Integer> unadded;
     
     Prims(int N, ArrayList<Integer> list){
     	weight= new int[N];
         parent = new int[N];
-        unadded = list;
+        ArrayList<Integer> temp= new ArrayList<Integer>();
+        temp.addAll(list);
+        unadded = temp;
         for (int i = 0; i < N; i++) 
         { 
             weight[i] = Integer.MAX_VALUE; 
-            unadded.add(i);
         } 
         
     }

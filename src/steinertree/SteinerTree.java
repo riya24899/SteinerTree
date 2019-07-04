@@ -1,9 +1,14 @@
+//Angel Walia 2017132
+//Riya Singh 2017309
+
+
 package steinertree;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
 class node{
+    int dadvertex;
     int vertex;
     int weight;
     
@@ -11,6 +16,12 @@ class node{
         this.vertex=vertex;
         this.weight=weight;
         
+    }
+    
+    node(int dadvertex, int vertex,int weight){
+        this.vertex=vertex;
+        this.dadvertex=dadvertex;
+        this.weight=weight;
     }
     
     public boolean equals(Object O) {
@@ -114,20 +125,19 @@ public class SteinerTree {
         }
        
         
-//        System.out.println("ans");
-//        for (int i=0; i<s.dist.length;i++) {
-//        	System.out.println(s.dist[i]);
-//        	System.out.println("parent "+s.parent[i]);
-//        }
-//        
-//        Prims s1=new Prims(N);
-//        s1.calcTree(graph, 1);
-//        System.out.println("ans");
-//        for (int i=0; i<N;i++) {
-//        	
-//        	System.out.println("parent "+s1.parent[i]);
-//        }
+             
         
+        Dijkstra s= new Dijkstra(N);
+        s.calcDist(graph, 1);
+        //System.out.println("ans");
+        for (int i=0; i<s.dist.length;i++) {
+        	//System.out.println(s.dist[i]);
+        	//System.out.println("parent "+s.parent[i]);
+        }
+        
+    
+        Sec = sc.nextLine();
+        Sec = sc.nextLine();
         Sec = sc.nextLine();
         int T= Integer.parseInt(sc.nextLine().split(" ")[1]);
         if (T==0) {
@@ -135,11 +145,13 @@ public class SteinerTree {
         }
         ArrayList<Integer> Terminals = new ArrayList<Integer> ();
         for(int i =0;i<T;i++) Terminals.add(Integer.parseInt(sc.nextLine().split(" ")[1])-1);
+        Sec = sc.nextLine(); //take the last end
+        System.out.println();
         
         ArrayList<ArrayList<node>> Terminalgraph= new ArrayList<ArrayList<node>>();
         for(int i = 0;i<N;i++) Terminalgraph.add(new ArrayList<node>()) ;
         
-//        Forming new grapf with terminals only 
+//        Forming new graph with terminals only 
         for(int i=0; i<T;i++) {
         	Dijkstra temp= new Dijkstra(N);
         	int terminal=Terminals.get(i);
@@ -147,7 +159,7 @@ public class SteinerTree {
         	for (int j=0; j<T;j++) {
         		int connecting=Terminals.get(j);
         		if (connecting>terminal) {
-        			System.out.println(terminal + " " + connecting);
+        			//System.out.println(terminal + " " + connecting);
         			int z= temp.dist[connecting];
         			Terminalgraph.get(terminal).add(new node(connecting,z));
                     Terminalgraph.get(connecting).add(new node(terminal,z));
@@ -157,15 +169,90 @@ public class SteinerTree {
         
         for (int i=0; i<N;i++) {        	
         	for (int j=0; j<Terminalgraph.get(i).size();j++) {
-        		System.out.println(i + " " + Terminalgraph.get(i).get(j).vertex + " " + Terminalgraph.get(i).get(j).weight);
+        		//System.out.println(i + " " + Terminalgraph.get(i).get(j).vertex + " " + Terminalgraph.get(i).get(j).weight);
         	}
         }
         
-//        Prims mst= new Prims(N, Terminals);
-//        mst.calcTree(Terminalgraph, Terminals.get(0));
-//        for (int i=)
-        
+        Prims mst= new Prims(N, Terminals);
+        mst.calcTree(Terminalgraph, Terminals.get(0)+1);
+                
   
-    }
+        ArrayList<ArrayList<node>> newgraph = new ArrayList<ArrayList<node>>();
+        for(int i = 0;i<N;i++) newgraph.add(new ArrayList<node>()) ;
+        
+        for(int i=0;i<Terminals.size();i++){
+            //System.out.println("Terminal: "+Terminals.get(i));
+            if(mst.parent[Terminals.get(i)]!=-1){
+                int from = mst.parent[Terminals.get(i)];
+                int to = Terminals.get(i);
+                //System.out.println("From: "+from+" To: "+to);
+                Dijkstra d = new Dijkstra(N);
+                
+                d.calcDist(graph, Terminals.get(i)+1);
+                int curpar= d.parent[from];
+                //for(int p=0;p<N;p++) System.out.println(d.parent[p]); System.out.println();
+                while(from!=to){
+                    //System.out.println(curpar);
+                    for(int y = 0;y<graph.get(from).size();y++){
+                        if(graph.get(from).get(y).vertex==curpar){
+                            //System.out.println(curpar + " "+from+" "+graph.get(from).get(y).weight);
+                            if(!newgraph.get(from).contains(new node(curpar,graph.get(from).get(y).weight)))
+                            newgraph.get(from).add(new node(curpar,graph.get(from).get(y).weight));
+                            if(!newgraph.get(curpar).contains(new node(from,graph.get(from).get(y).weight)))
+                            newgraph.get(curpar).add(new node(from,graph.get(from).get(y).weight));
+
+                        }
+                    }
+                    
+                    
+                    from=curpar;
+                    curpar=d.parent[from];
+                    
+                }
+            }
+        }
+        
+        
+        
+        
+        //prims to remove cycles form the graph
+        ArrayList<Integer> topass=new ArrayList<Integer>();
+        for(int i=0;i<N;i++) topass.add(i);
+        Prims no_cycle_mst = new Prims(N,topass);
+        no_cycle_mst.calcTree(newgraph, Terminals.get(0)+1);
+        
+        ArrayList<node> L = new ArrayList<node> ();
+        
+        int cost =0;
+        for(int i =0 ;i <N;i++){
+            //System.out.println(no_cycle_mst.parent[i] + " " + no_cycle_mst.weight[i]);
+            if(no_cycle_mst.weight[i] != Integer.MAX_VALUE && no_cycle_mst.parent[i]!= -1 ){
+                //System.out.println(no_cycle_mst.parent[i] + " " + no_cycle_mst.weight[i]);
+                L.add(new node(i+1,no_cycle_mst.parent[i]+1,no_cycle_mst.weight[i]));
+                cost+=no_cycle_mst.weight[i];
+            }
+        }
+        
+        System.out.println("Section GRAPH");
+        System.out.println("Nodes "+ L.size());
+        System.out.println("Edges "+ (L.size()-1));
+        for(int i =0;i<L.size();i++){
+            System.out.println("E "+L.get(i).dadvertex + " "+ L.get(i).vertex + " " + L.get(i).weight);
+        } 
+        System.out.println("END");
+        System.out.println();
+        System.out.println("Section TERMINALS");
+        System.out.println("Terminals "+ Terminals.size());
+        for(int i= 0 ;i < Terminals.size();i++) System.out.println("T " + (Terminals.get(i)+1));
+        System.out.println("END");
+        System.out.println();
+        System.out.println("COST");
+        System.out.println(cost);
+        System.out.println("END");
+        
+        
+        
+        
     
+    }
 }
